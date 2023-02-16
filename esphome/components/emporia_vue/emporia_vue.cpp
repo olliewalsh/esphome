@@ -119,16 +119,25 @@ void CTClampConfig::update_from_reading(const SensorReading &sensor_reading) {
     float calibrated_power = this->get_calibrated_power(raw_power);
     this->power_sensor_->publish_state(calibrated_power);
   }
-  if (this->current_sensor_) {
+  if (this->current_sensor_ || this->apparent_power_sensor_) {
     uint16_t raw_current = sensor_reading.current[this->input_port_];
     double raw_current_d = (double) raw_current;
     double scalar;
+    double current;
     if (this->input_port_ <= CTInputPort::C) {
-      scalar = 775.0 / 42624.0;
+      scalar = (775.0 / 42624.0) / 2.0;
     } else {
-      scalar = 775.0 / 170496.0;
+      scalar = (775.0 / 170496.0) / 2.0;
     }
-    this->current_sensor_->publish_state(raw_current_d * scalar);
+    current = raw_current_d * scalar;
+    if (this->current_sensor_) {
+      this->current_sensor_->publish_state(current);
+    }
+    if (this->apparent_power_sensor_) {
+      double apparent_power;
+      apparent_power = current * sensor_reading.voltage[this->phase_->get_input_wire()];
+      this->apparent_power_sensor_->publish_state(apparent_power);
+    }
   }
 }
 

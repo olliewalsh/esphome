@@ -10,16 +10,19 @@ from esphome.const import (
     CONF_VOLTAGE,
     CONF_FREQUENCY,
     CONF_PHASE_ANGLE,
+    CONF_APPARENT_POWER,
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_FREQUENCY,
     DEVICE_CLASS_POWER,
     DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_APPARENT_POWER,
     STATE_CLASS_MEASUREMENT,
     UNIT_AMPERE,
     UNIT_WATT,
     UNIT_VOLT,
     UNIT_HERTZ,
     UNIT_DEGREES,
+    UNIT_VOLT_AMPS,
 )
 
 CONF_CT_CLAMPS = "ct_clamps"
@@ -84,6 +87,12 @@ SCHEMA_CT_CLAMP = {
         state_class=STATE_CLASS_MEASUREMENT,
         accuracy_decimals=2,
     ),
+    cv.Optional(CONF_APPARENT_POWER): sensor.sensor_schema(
+        unit_of_measurement=UNIT_VOLT_AMPS,
+        device_class=DEVICE_CLASS_APPARENT_POWER,
+        state_class=STATE_CLASS_MEASUREMENT,
+        accuracy_decimals=2,
+    )
 }
 
 
@@ -197,6 +206,10 @@ async def to_code(config):
         if CONF_CURRENT in ct_config:
             current_sensor = await sensor.new_sensor(ct_config[CONF_CURRENT])
             cg.add(ct_clamp_var.set_current_sensor(current_sensor))
+
+        if CONF_APPARENT_POWER in ct_config:
+            apparent_power_sensor = await sensor.new_sensor(ct_config[CONF_APPARENT_POWER])
+            cg.add(ct_clamp_var.set_apparent_power_sensor(apparent_power_sensor))
 
         ct_clamps.append(ct_clamp_var)
     cg.add(var.set_ct_clamps(ct_clamps))

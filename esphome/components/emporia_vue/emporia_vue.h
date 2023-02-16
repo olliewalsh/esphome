@@ -120,6 +120,8 @@ class CTClampConfig : public sensor::Sensor {
   sensor::Sensor *get_power_sensor() const { return this->power_sensor_; }
   void set_current_sensor(sensor::Sensor *current_sensor) { this->current_sensor_ = current_sensor; }
   sensor::Sensor *get_current_sensor() const { return this->current_sensor_; }
+  void set_apparent_power_sensor(sensor::Sensor *apparent_power_sensor) { this->apparent_power_sensor_ = apparent_power_sensor; }
+  sensor::Sensor *get_apparent_power_sensor() const { return this->apparent_power_sensor_; }
 
   void update_from_reading(const SensorReading &sensor_reading);
   float get_calibrated_power(int32_t raw_power) const;
@@ -129,6 +131,7 @@ class CTClampConfig : public sensor::Sensor {
   CTInputPort input_port_;
   sensor::Sensor *power_sensor_{nullptr};
   sensor::Sensor *current_sensor_{nullptr};
+  sensor::Sensor *apparent_power_sensor_{nullptr};
 };
 
 }  // namespace emporia_vue
