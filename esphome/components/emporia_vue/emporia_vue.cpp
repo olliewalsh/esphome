@@ -135,7 +135,7 @@ void CTClampConfig::update_from_reading(const SensorReading &sensor_reading) {
     }
     if (this->apparent_power_sensor_) {
       double apparent_power;
-      apparent_power = current * sensor_reading.voltage[this->phase_->get_input_wire()];
+      apparent_power = current * (sensor_reading.voltage[this->phase_->get_input_wire()] * this->phase_->get_calibration());
       this->apparent_power_sensor_->publish_state(apparent_power);
     }
   }
